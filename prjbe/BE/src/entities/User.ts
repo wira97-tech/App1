@@ -28,10 +28,10 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ nullable: true })
+  @Column({ default: "https://via.placeholder.com/200", nullable: true })
   profil_picture: string;
 
-  @Column({ nullable: true })
+  @Column({ default: "Hai from server", nullable: true })
   profil_description: string;
 
   @CreateDateColumn({ type: "timestamp with time zone" })

@@ -119,7 +119,7 @@ const Replies = () => {
           colorMode === "dark" ? "bg-[#1a202c]" : "bg-white"
         } p-5 z-[3]`}
       >
-        <Link href="/" textDecoration="none">
+        <Link href="/home" textDecoration="none">
           <Text
             fontSize="larger"
             className="font-bold mb-6 ml-2 flex items-center"

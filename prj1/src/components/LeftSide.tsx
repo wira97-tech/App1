@@ -8,10 +8,10 @@ import {
   faSun,
 } from "@fortawesome/free-solid-svg-icons";
 import {
+  Avatar,
   Button,
   Flex,
   FormControl,
-  FormLabel,
   Input,
   Link,
   Modal,
@@ -19,21 +19,53 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalFooter,
-  ModalHeader,
   ModalOverlay,
   Stack,
-  Textarea,
   useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
 import { RiLogoutBoxLine } from "react-icons/ri";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { LuImagePlus } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
+
 const Navigation = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const handleImageClick = () => {
+    // Membuka dialog pemilihan gambar saat ikon diklik
+    inputRef.current?.click();
+  };
+
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedImage = e.target.files?.[0];
+    if (selectedImage) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(selectedImage);
+    }
+  };
+
+  const clearImagePreview = () => {
+    setImagePreview(null);
+  };
+
+  const imagePreviewStyle: React.CSSProperties = {
+    backgroundImage: `url(${imagePreview})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
+
+  useEffect(() => {});
+  const navigate = useNavigate();
   return (
     <div className="container mx-auto mt-3 ms-4 top-0 me-4 fixed">
       <Modal
@@ -43,20 +75,56 @@ const Navigation = () => {
         onClose={onClose}
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bgSize="lg">
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>First name</FormLabel>
-              <Textarea ref={initialRef} placeholder="First name" />
+            <FormControl className="flex">
+              <Avatar
+                name="Dan Abrahmov"
+                src="https://bit.ly/dan-abramov"
+                marginRight="10px"
+              />
+              <Input
+                ref={initialRef}
+                variant="flushed"
+                placeholder="What's happening"
+              />
             </FormControl>
           </ModalBody>
-
           <ModalFooter>
-            <Button colorScheme="blue" mr={3}>
-              Save
+            <Stack className="me-60">
+              {imagePreview && (
+                <div
+                  className="w-20 h-20 overflow-hidden ml-16"
+                  style={imagePreviewStyle}
+                >
+                  <button
+                    className="w-full h-full flex items-center justify-center bg-black bg-opacity-50"
+                    onClick={clearImagePreview}
+                  >
+                    X
+                  </button>
+                </div>
+              )}
+            </Stack>
+            <label className="relative cursor-pointer items-center ">
+              <input
+                ref={inputRef}
+                type="file"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+              <button>
+                <LuImagePlus
+                  className="text-green-500 mr-2"
+                  onClick={handleImageClick}
+                  size="37px"
+                />
+              </button>
+            </label>
+            <Button colorScheme="green" mr={3}>
+              Reply
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -104,15 +172,24 @@ const Navigation = () => {
           <button className="hover:text-green-500 font-bold">Profile</button>
         </li>
       </ul>
-      <button onClick={onOpen} className="mt-4 bg-green-500 hover:bg-green-900 rounded-lg p-2 text-white w-52 font-semibold items">
+      <button
+        onClick={onOpen}
+        className="mt-4 bg-green-500 hover:bg-green-900 rounded-lg p-2 text-white w-52 font-semibold items"
+      >
         Create Post
       </button>
-      <Link href="/login">
-        <Flex className="items-center mt-96" style={{ fontSize: "18px" }}>
+      <div>
+        <Button
+          onClick={() => {
+            localStorage.removeItem("token");
+            navigate("/login");
+          }}
+          marginTop="22rem"
+        >
           <RiLogoutBoxLine />
           <span>Log Out</span>
-        </Flex>
-      </Link>
+        </Button>
+      </div>
     </div>
   );
 };

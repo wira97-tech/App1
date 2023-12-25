@@ -52,10 +52,10 @@ export default new (class UserService {
     try {
       const data = req.body;
       const responseData = await this.userRepository.findOne({
-        where: { userName: data.userName },
+        where: { email: data.email },
       });
       if (responseData === undefined) {
-        return res.status(404).json({ message: "username is wrong" });
+        return res.status(404).json({ message: "email not registered" });
       }
       const checkPassword = await bcrypt.compare(
         data.password,
@@ -64,12 +64,15 @@ export default new (class UserService {
       if (checkPassword === false) {
         return res.status(404).json({ message: "password is wrong" });
       }
-      const user = await this.userRepository.create({
+      const userForToken = {
         id: responseData.id,
+        email: responseData.email,
         userName: responseData.userName,
+      };
+      const token = jwt.sign({ user: userForToken }, "butuan1997", {
+        expiresIn: "2h",
       });
-
-      return res.status(200).json({ message: "succesfully login" });
+      return res.status(200).json({ message: "succesfully login", token });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: "something went wrong" });

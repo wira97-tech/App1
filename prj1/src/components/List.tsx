@@ -7,6 +7,7 @@ import Api from "../lib/axios";
 import IProfilType from "../type/ProfilType";
 import { Link } from "react-router-dom";
 
+
 const List = () => {
   const { colorMode } = useColorMode();
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -157,9 +158,7 @@ const List = () => {
                     <FontAwesomeIcon icon={faHeart} className="mr-2" />
                     {likes}
                   </button>{" "}
-                  <p>{thread.like_count}</p>
-                  {" "}
-                  <span>Likes</span>
+                  <p>{thread.like_count}</p> <span>Likes</span>
                   <FontAwesomeIcon
                     icon={faMessage}
                     className="ml-2 mr-1 text-gray-400"
