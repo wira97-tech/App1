@@ -44,7 +44,7 @@ export const login = createAsyncThunk(
         email,
         password,
       });
-      const data: IRegisterType = response.data;
+      const data: UserType = response.data;
       console.log(data);
       return data;
     } catch (error) {
@@ -56,6 +56,16 @@ export const login = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk<void, void>("/logout", async () => {
+  try {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  } catch (error) {
+    console.error("Error during logout:", error);
+    throw error;
+  }
+});
+
 const initialState: AuthState = {
   currentUser: null,
   isLoading: false,
@@ -66,6 +76,19 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
+    // builder
+    // .addCase(login.pending, (state) => {
+    //   state.isLoading = true;
+    // })
+    // .addCase(login.fulfilled, (state, action) => {
+    //   state.isLoading = false;
+    //   if (action.payload) {
+    //     localStorage.setItem("token", action.payload.token);
+    //     const userObj: UserType = JSON.parse(JSON.stringify(action.payload.user));
+    //     localStorage.setItem("user", JSON.stringify(userObj));
+    //     state.currentUser = userObj;
+    //   }
+    // });
     builder
       .addCase(register.pending, (state) => {
         state.isLoading = true;

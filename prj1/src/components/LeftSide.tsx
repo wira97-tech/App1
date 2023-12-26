@@ -10,10 +10,8 @@ import {
 import {
   Avatar,
   Button,
-  Flex,
   FormControl,
   Input,
-  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -21,13 +19,15 @@ import {
   ModalFooter,
   ModalOverlay,
   Stack,
+  Textarea,
   useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import React, { useEffect, useRef, useState } from "react";
 import { LuImagePlus } from "react-icons/lu";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Navigation = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -64,6 +64,8 @@ const Navigation = () => {
     backgroundPosition: "center",
   };
 
+  const location = useLocation();
+
   useEffect(() => {});
   const navigate = useNavigate();
   return (
@@ -73,20 +75,22 @@ const Navigation = () => {
         finalFocusRef={finalRef}
         isOpen={isOpen}
         onClose={onClose}
+        size="xl"
       >
         <ModalOverlay />
         <ModalContent bgSize="lg">
-          <ModalCloseButton />
-          <ModalBody pb={6}>
+          <ModalCloseButton  />
+          <ModalBody pb={6} marginTop={10}>
             <FormControl className="flex">
               <Avatar
                 name="Dan Abrahmov"
                 src="https://bit.ly/dan-abramov"
                 marginRight="10px"
               />
-              <Input
+              <Textarea
+                width="40rem"
                 ref={initialRef}
-                variant="flushed"
+                // variant="flushed"
                 placeholder="What's happening"
               />
             </FormControl>
@@ -153,12 +157,19 @@ const Navigation = () => {
         </Button>
       </Stack>
       <ul className="mt-4">
-        <li className="mt-4">
-          <FontAwesomeIcon icon={faHouse} className="me-2" />
-          <button className="hover:text-green-500 active:text-green-500 font-bold">
-            Home
-          </button>
-        </li>
+        <NavLink
+          to="/home"
+          style={{
+            color: location.pathname === "/home" ? "green" : "green",
+          }}
+        >
+          <li className="mt-4">
+            <FontAwesomeIcon icon={faHouse} className="me-2" />
+            <button className="hover:text-green-500 active:text-green-500 font-bold">
+              Home
+            </button>
+          </li>
+        </NavLink>
         <li className="mt-4">
           <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" />
           <button className="hover:text-green-500 font-bold">Search</button>

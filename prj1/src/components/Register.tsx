@@ -1,4 +1,4 @@
-import { Container, Flex, FormControl, Input } from "@chakra-ui/react";
+import { Container, Flex, FormControl, Input, Link } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Api from "../lib/axios";
@@ -7,7 +7,6 @@ import { AppDispatch } from "../redux/store/store";
 import { register } from "../redux/slices/authSlice";
 import Swal from "sweetalert2";
 
-
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
@@ -15,7 +14,7 @@ const Register: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
-  
+
   const handleRegister = async () => {
     dispatch(register({ fullName, userName, email, password }))
       .unwrap()
@@ -93,9 +92,11 @@ const Register: React.FC = () => {
         </FormControl>
         <p className="mt-3">
           Already have an account?{" "}
-          <span className="text-green-500 font-bold hover:text-green-300">
-            Login
-          </span>
+          <Link href="/login">
+            <span className="text-green-500 font-bold hover:text-green-300">
+              Login
+            </span>
+          </Link>
         </p>
       </Container>
     </Flex>

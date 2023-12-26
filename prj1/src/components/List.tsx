@@ -1,12 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMessage } from "@fortawesome/free-solid-svg-icons";
-import { Avatar, Flex, Textarea, useColorMode } from "@chakra-ui/react";
+import { Avatar, Flex, Input, Textarea, useColorMode } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { LuImagePlus } from "react-icons/lu";
 import Api from "../lib/axios";
 import IProfilType from "../type/ProfilType";
 import { Link } from "react-router-dom";
-
 
 const List = () => {
   const { colorMode } = useColorMode();
@@ -88,21 +87,22 @@ const List = () => {
   };
 
   return (
-    <div className="container mx-auto border-l mt-4 w-full ms-4 ">
+    <div className="container mx-auto border-l w-full ms-4 ">
       <div
         className={` top-0 sticky ${
           colorMode === "dark" ? "bg-[#1a202c]" : "bg-white"
         } p-5 z-[3]`}
       >
         <h1 className="font-bold mb-6 ml-2">Home</h1>
-        <Flex className="items-center ml-2">
+        <Flex className="items-center ms-8">
           <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
-          <Textarea
+          <Input
             placeholder="What's Happening ?"
             size="md"
             className="mr-2 ml-2 p-1 bg-black"
             onChange={handleInputChange}
             resize="none"
+            border="none"
           />
           <label className="relative cursor-pointer items-center ">
             <input
@@ -125,7 +125,7 @@ const List = () => {
         </Flex>
         {imagePreview && (
           <div
-            className="w-20 h-20 overflow-hidden ml-16"
+            className="w-20 h-20 overflow-hidden ml-24"
             style={imagePreviewStyle}
           >
             <button
@@ -137,18 +137,24 @@ const List = () => {
           </div>
         )}
       </div>
-      <div className="z-[2] ms-4">
+      <div className="z-[2] ms-10 me-10">
         {threads.map((thread: IProfilType) => (
-          <div key={thread.id} className="border p-3 mb-4">
+          <div
+            key={thread.id}
+            className="p-3"
+            style={{ borderBottom: "1px solid" }}
+          >
             <Link to={`/thread/${thread.id}`} className="">
               <div className="flex items-center">
                 <Avatar name={thread.fullName} src={thread.image} />
                 <p className="ml-2 font-bold">{thread.userName}</p>
               </div>
-              <p className="mt-2">{thread.content}</p>
+              <p className="mt-2" style={{ fontSize: "13px" }}>
+                {thread.content}
+              </p>
 
               <div className="flex justify-between mt-2">
-                <div className="flex items-center">
+                <div className="flex items-center  text-gray-400">
                   <button
                     onClick={handleLikeClick}
                     className={`flex items-center ${
@@ -158,13 +164,14 @@ const List = () => {
                     <FontAwesomeIcon icon={faHeart} className="mr-2" />
                     {likes}
                   </button>{" "}
-                  <p>{thread.like_count}</p> <span>Likes</span>
+                  <p className="gap-3">{thread.like_count}</p>{" "}
+                  <span style={{ fontSize: "13px", marginLeft:"4px" }}>Likes</span>
                   <FontAwesomeIcon
                     icon={faMessage}
                     className="ml-2 mr-1 text-gray-400"
                   />
                   <span>{thread.replies}</span>
-                  <span>Replies</span>
+                  <span style={{ fontSize: "13px" }}>Replies</span>
                 </div>
               </div>
             </Link>

@@ -5,7 +5,8 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entities/User";
 
 export default new (class ThreadService {
-  private readonly threadRepository: Repository<Thread> = AppDataSource.getRepository(Thread);
+  private readonly threadRepository: Repository<Thread> =
+    AppDataSource.getRepository(Thread);
   // private userRepository: Repository <User> = AppDataSource.getRepository(User)
 
   // async createThread(content: string, userId: number): Promise<Thread> {
@@ -33,9 +34,14 @@ export default new (class ThreadService {
   async create(req: Request, res: Response): Promise<Response> {
     try {
       const data = req.body;
+      const loginSession = res.locals.loginSession;
+      const image = res.locals.filename;
       const objectData = await this.threadRepository.create({
         content: data.content,
-        image: data.image,
+        image: image,
+        user: {
+          id: loginSession.userId,
+        },
       });
       const insertData = await this.threadRepository.save(objectData);
       return res.status(200).json({

@@ -1,14 +1,24 @@
-import { Container, Flex, FormControl, Input } from "@chakra-ui/react";
+import {
+  Container,
+  Flex,
+  FormControl,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Link,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { AppDispatch } from "../redux/store/store";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/slices/authSlice";
 import Swal from "sweetalert2";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const handleLogin = async () => {
@@ -48,13 +58,21 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Input
-            placeholder="Password"
-            className="mt-3"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <InputGroup className="flex items-center">
+            <Input
+              placeholder="Password"
+              className="mt-3"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <InputRightElement width="3rem" marginTop={3} fontSize={20}>
+              <button onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+              </button>
+            </InputRightElement>
+          </InputGroup>
           <p className="text-green-600 hover:text-green-500 justify-end flex mt-2">
             Forgot Password?
           </p>
@@ -67,9 +85,11 @@ const Login = () => {
         </FormControl>
         <p className="mt-3">
           Don't have an account yet?{" "}
-          <span className="text-green-500 font-bold hover:text-green-300">
-            Register
-          </span>
+          <Link href="/register">
+            <span className="text-green-500 font-bold hover:text-green-300">
+              Register
+            </span>
+          </Link>
         </p>
       </Container>
     </Flex>

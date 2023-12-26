@@ -7,7 +7,6 @@ import {
   Input,
   Link,
   Text,
-  Textarea,
   useColorMode,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
@@ -16,7 +15,7 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import Api from "../lib/axios";
 import IProfilType from "../type/ProfilType";
 import { useParams } from "react-router-dom";
-import { response } from "express";
+import moment from "moment";
 
 const Replies = () => {
   const { colorMode } = useColorMode();
@@ -113,7 +112,7 @@ const Replies = () => {
   console.log("ini ID", id);
 
   return (
-    <div className="container mx-auto border-l mt-4 w-full ms-4 ">
+    <div className="container mx-auto border-l w-full ms-4 ">
       <div
         className={` top-0 sticky ${
           colorMode === "dark" ? "bg-[#1a202c]" : "bg-white"
@@ -130,7 +129,7 @@ const Replies = () => {
             Status
           </Text>
         </Link>
-        <Text className="ms-3">
+        <Text className="ms-8">
           {thread && (
             <div>
               <Avatar
@@ -139,11 +138,19 @@ const Replies = () => {
                 marginBottom="10px"
               />
               <h2>{thread.fullName}</h2>
-              <p>{thread.content}</p>
+              <p style={{ fontSize: "13px" }}>{thread.content}</p>
               <p> {thread.image}</p>
-              <p>{thread.postedAt}</p>
-              <div className="flex justify-between mt-2 mb-7">
-                <div className="flex items-center">
+              <p
+                className=" text-gray-400"
+                style={{ fontSize: "13px", marginTop: "15px" }}
+              >
+                {moment(thread.postedAt).format(" HH:mm . MMMM DD, YYYY ")}
+              </p>
+              <div className="flex justify-between mt-1 mb-7">
+                <div
+                  className="flex items-center  text-gray-400"
+                  style={{ fontSize: "13px" }}
+                >
                   <button
                     onClick={handleLikeClick}
                     className={`flex items-center ${
@@ -155,7 +162,7 @@ const Replies = () => {
                   </button>{" "}
                   <p>
                     <p>{thread.like_count}</p>
-                    <span>Likes</span>
+                    <span style={{ marginLeft: "4px" }}>Likes</span>
                   </p>
                   <FontAwesomeIcon
                     icon={faMessage}
@@ -169,12 +176,17 @@ const Replies = () => {
           )}
         </Text>
         <Flex className="items-center ml-2">
-          <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
+          <Avatar
+            name="Dan Abrahmov"
+            src="https://bit.ly/dan-abramov"
+            marginStart="20px"
+            marginEnd={3}
+          />
           <Input
             variant="flushed"
             placeholder="Type your reply"
             size="sm"
-            className="mr-2 ml-2 p-1 bg-black"
+            className=" p-3 bg-black me-4"
             onChange={handleInputChange}
             resize="none"
           />
@@ -194,8 +206,8 @@ const Replies = () => {
             </button>
           </label>
           <Button
-            backgroundColor="green"
-            className="bg-green-500 rounded-full w-20 text-white mr-2 font-bold p-1"
+            backgroundColor="#22c55e"
+            className="bg-[#22c55e] rounded-full w-20 text-white mr-2 font-bold p-1"
           >
             Reply
           </Button>
@@ -214,16 +226,22 @@ const Replies = () => {
           </div>
         )}
       </div>
-      <div className="z-[2] ms-4">
+      <div className="z-[2] ms-10 me-10">
         {threads.map((thread: IProfilType) => (
-          <div key={thread.id} className="border p-3 mb-4">
+          <div
+            key={thread.id}
+            className="p-3"
+            style={{ borderBottom: "1px solid" }}
+          >
             <div className="flex items-center">
               <Avatar name={thread.fullName} src={thread.image} />
               <p className="ml-2 font-bold">{thread.userName}</p>
             </div>
-            <p className="mt-2">{thread.content}</p>
+            <p className="mt-2" style={{ fontSize: "13px" }}>
+              {thread.content}
+            </p>
             <div className="flex justify-between mt-2">
-              <div className="flex items-center">
+              <div className="flex items-center " style={{ fontSize: "13px" }}>
                 <button
                   onClick={handleLikeClick}
                   className={`flex items-center ${
@@ -232,10 +250,10 @@ const Replies = () => {
                 >
                   <FontAwesomeIcon icon={faHeart} className="mr-2" />
                   {likes}
-                </button>{" "}
+                </button>
                 <p>
                   <p>{thread.like_count}</p>
-                  <span>Likes</span>
+                  <span style={{ marginLeft: "4px" }}>Likes</span>
                 </p>
                 <FontAwesomeIcon
                   icon={faMessage}
