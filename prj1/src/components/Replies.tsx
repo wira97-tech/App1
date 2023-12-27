@@ -16,6 +16,7 @@ import Api from "../lib/axios";
 import IProfilType from "../type/ProfilType";
 import { useParams } from "react-router-dom";
 import moment from "moment";
+import { jwtDecode } from "jwt-decode";
 
 const Replies = () => {
   const { colorMode } = useColorMode();
@@ -111,6 +112,9 @@ const Replies = () => {
   }, [id]);
   console.log("ini ID", id);
 
+  const token = localStorage.getItem("token") + "";
+  const user = jwtDecode<{ user: any }>(token);
+
   return (
     <div className="container mx-auto border-l w-full ms-4 ">
       <div
@@ -133,13 +137,18 @@ const Replies = () => {
           {thread && (
             <div>
               <Avatar
-                name="Dan Abrahmov"
-                src="https://bit.ly/dan-abramov"
+                name={thread.userName}
+                src={thread.profil_picture}
                 marginBottom="10px"
               />
               <h2>{thread.fullName}</h2>
-              <p style={{ fontSize: "13px" }}>{thread.content}</p>
-              <p> {thread.image}</p>
+              <p style={{ fontSize: "13px", marginBottom: "7px" }}>
+                {thread.content}
+              </p>
+              <img
+                src={"http://localhost:5000/" + thread.image}
+                style={{ borderRadius: "10px", width: "30rem" }}
+              />
               <p
                 className=" text-gray-400"
                 style={{ fontSize: "13px", marginTop: "15px" }}
@@ -178,7 +187,7 @@ const Replies = () => {
         <Flex className="items-center ml-2">
           <Avatar
             name="Dan Abrahmov"
-            src="https://bit.ly/dan-abramov"
+            src={user.user.profil_picture}
             marginStart="20px"
             marginEnd={3}
           />
@@ -234,12 +243,16 @@ const Replies = () => {
             style={{ borderBottom: "1px solid" }}
           >
             <div className="flex items-center">
-              <Avatar name={thread.fullName} src={thread.image} />
-              <p className="ml-2 font-bold">{thread.userName}</p>
+              <Avatar name={user.user.fullName} src={thread.profil_picture} />
+              <p className="ml-2 font-bold">{user.user.userName}</p>
             </div>
             <p className="mt-2" style={{ fontSize: "13px" }}>
               {thread.content}
             </p>
+            <img
+              src={"http://localhost:5000/" + thread.image}
+              style={{ borderRadius: "10px", width: "30rem" }}
+            />
             <div className="flex justify-between mt-2">
               <div className="flex items-center " style={{ fontSize: "13px" }}>
                 <button

@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "./data-source";
 import ThreadRouter from "./routes/threadRoute";
 import UserRouter from "./routes/userRoute";
+import path = require("path");
 
 AppDataSource.initialize()
   .then(async () => {
@@ -18,6 +19,7 @@ AppDataSource.initialize()
     };
     app.use(express.json());
     app.use(cors(corsOption));
+    app.use(express.static(path.join(__dirname, "uploads")));
     app.use("/api/v1", ThreadRouter);
     app.use("/api/v1", UserRouter);
 

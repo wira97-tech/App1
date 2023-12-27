@@ -22,15 +22,23 @@ export default new (class UploadImageStorage {
       next: NextFunction
     ) => {
       uploadFile.single(fieldName)(req, res, (err: any) => {
-        if (err)
-          return res
-            .status(400)
-            .json({
-              message:
-                "file upload failed please check destination or filename configuration",
-            });
+        if (err) {
+          // If no file is uploaded, continue without an error
+          if (err.code === "LIMIT_UNEXPECTED_FILE") {
+            return next();
+          }
 
-        res.locals.filename = req.file.filename;
+          return res.status(400).json({
+            message:
+              "file upload failed please check destination or filename configuration",
+          });
+        }
+
+        // Check if req.file exists before accessing its properties
+        if (req.file) {
+          res.locals.filename = req.file.filename;
+        }
+
         next();
       });
     };

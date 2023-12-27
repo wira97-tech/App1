@@ -1,37 +1,36 @@
 import { Avatar, Card, CardBody, Image, useColorMode } from "@chakra-ui/react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store/store";
+// import { useDispatch, useSelector } from "react-redux";
+// import { RootState } from "../redux/store/store";
 import { jwtDecode } from "jwt-decode";
-import React, { useEffect } from "react";
-import { getAllUser } from "../redux/slices/userSlice";
+// import React, { useEffect } from "react";
+// import { getAllUser } from "../redux/slices/userSlice";
 
 const UserProfile = () => {
-  const dataUser =
-    useSelector((state: RootState) => state.user.currentUser) || [];
-  const dispatch = useDispatch();
-  const userId: any = localStorage.getItem("token");
-  const token: any = jwtDecode(userId);
+  // const dataUser =
+  //   useSelector((state: RootState) => state.user.currentUser) || [];
+  // const dispatch = useDispatch();
+  const token = localStorage.getItem("token") +"";
+  const user = jwtDecode<{ user: any }>(token);
+  // // console.log(token.user.id);
+  // useEffect(() => {
+  //   // console.log(userId);
+  //   if (!Array.isArray(dataUser) || dataUser.length === 0) {
+  //     dispatch(getAllUser());
+  //   }
+  // }, [userId, dataUser, dispatch]);
 
-  // console.log(token.user.id);
-  useEffect(() => {
-    // console.log(userId);
-    if (!Array.isArray(dataUser) || dataUser.length === 0) {
-      dispatch(getAllUser());
-    }
-  }, [userId, dataUser, dispatch]);
+  // const userLogin = Array.isArray(dataUser)
+  //   ? dataUser.filter((user: any) => user.id === Number(token.user.id))
+  //   : [];
 
-  const userLogin = Array.isArray(dataUser)
-    ? dataUser.filter((user: any) => user.id === Number(token.user.id))
-    : [];
+  // // console.log("Token Before Decode:", userId);
 
-  // console.log("Token Before Decode:", userId);
-
-  useEffect(() => {
-    if (Array.isArray(dataUser) && dataUser.length > 0) {
-      // console.log("ini data user", dataUser);
-      // console.log(userLogin);
-    }
-  }, [dataUser, userLogin]);
+  // useEffect(() => {
+  //   if (Array.isArray(dataUser) && dataUser.length > 0) {
+  //     // console.log("ini data user", dataUser);
+  //     // console.log(userLogin);
+  //   }
+  // }, [dataUser, userLogin]);
   const { colorMode } = useColorMode();
   return (
     <Card maxW="sm" maxH="sm" className="rounded-md">
@@ -42,11 +41,9 @@ const UserProfile = () => {
           alt="background colour"
           borderRadius="lg"
         />
-        {userLogin.map((user: any, index: number) => (
-          <React.Fragment key={index}>
             <Avatar
               size="xl"
-              src={user.profil_picture}
+              src={user.user.profil_picture}
               border={`5px solid ${colorMode === "dark" ? "#2D3748" : "white"}`}
               className="relative bottom-12 left-10"
             />
@@ -56,11 +53,11 @@ const UserProfile = () => {
               </button>
             </div>
             <div className="bottom-11 relative -mt-5 ">
-              <h2 style={{ fontSize: 20 }}>🎆✨{user.fullName}✨🎆</h2>
+              <h2 style={{ fontSize: 20 }}>🎆✨{user.user.fullName}✨🎆</h2>
               <h6 style={{ fontSize: 13, color: "#a3a8a5" }}>
-                @{user.userName}
+                @{user.user.userName}
               </h6>
-              <p>{user.profil_description}</p>
+              <p>{user.user.profil_description}</p>
               <div className="flex items-center">
                 <p className="me-2">23{user.followingCount}</p>
                 <p className="me-2 font-light" style={{ fontSize: "sm" }}>
@@ -70,8 +67,8 @@ const UserProfile = () => {
                 <p className="font-light">Followers</p>
               </div>
             </div>
-          </React.Fragment>
-        ))}
+         
+
       </CardBody>
     </Card>
   );

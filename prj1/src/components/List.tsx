@@ -1,15 +1,21 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMessage } from "@fortawesome/free-solid-svg-icons";
 import { Avatar, Flex, Input, Textarea, useColorMode } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { LuImagePlus } from "react-icons/lu";
 import Api from "../lib/axios";
 import IProfilType from "../type/ProfilType";
 import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const List = () => {
   const { colorMode } = useColorMode();
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [inputValue, setInputValue] = useState("");
+  const [Image, setNewImage] = useState<File>();
+  const token = localStorage.getItem("token") + "";
+  const user = jwtDecode<{ user: any }>(token);
+
   const handleImageClick = () => {
     // Membuka dialog pemilihan gambar saat ikon diklik
     inputRef.current?.click();
@@ -24,6 +30,10 @@ const List = () => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(selectedImage);
+
+      if (e.target.files && e.target.files[0]) {
+        setNewImage(e.target.files[0]);
+      }
     }
   };
 
@@ -51,12 +61,26 @@ const List = () => {
   };
 
   useEffect(() => {});
-  const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (event: any) => {
     setInputValue(event.target.value);
   };
   console.log("input value:", inputValue);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("image", Image!);
+    formData.append("content", inputValue);
+    const response = await Api.post("/thread", formData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log(response);
+    setInputValue("");
+    setNewImage(undefined);
+    clearImagePreview();
+  };
+  console.log(Image);
+  console.log(inputValue);
 
   const [threads, setThreads] = useState<IProfilType[]>([]);
 
@@ -94,35 +118,45 @@ const List = () => {
         } p-5 z-[3]`}
       >
         <h1 className="font-bold mb-6 ml-2">Home</h1>
-        <Flex className="items-center ms-8">
-          <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
+
+        <form className="flex ms-8" onSubmit={handleSubmit}>
+          <Avatar name="Dan Abrahmov" src={user.user.profil_picture} />
           <Input
             placeholder="What's Happening ?"
-            size="md"
+            value={inputValue}
+            size="lg"
             className="mr-2 ml-2 p-1 bg-black"
             onChange={handleInputChange}
             resize="none"
             border="none"
           />
-          <label className="relative cursor-pointer items-center ">
+          <label
+            htmlFor="file"
+            className="relative cursor-pointer items-center "
+          >
             <input
               ref={inputRef}
               type="file"
+              id="file"
               className="hidden"
               onChange={handleImageChange}
             />
-            <button>
+            <button type="button">
               <LuImagePlus
                 className="text-green-500 mr-2"
                 onClick={handleImageClick}
-                size="37px"
+                size="48px"
               />
             </button>
           </label>
-          <button className="bg-green-500 rounded-full w-20 text-white mr-2 font-bold p-1">
+          <button
+            type="submit"
+            className="bg-green-500 rounded-xl w-40 text-white mr-2 font-bold p-1 h-12"
+          >
             Post
           </button>
-        </Flex>
+        </form>
+
         {imagePreview && (
           <div
             className="w-20 h-20 overflow-hidden ml-24"
@@ -146,13 +180,18 @@ const List = () => {
           >
             <Link to={`/thread/${thread.id}`} className="">
               <div className="flex items-center">
-                <Avatar name={thread.fullName} src={thread.image} />
+                <Avatar name={thread.fullName} src={thread.profil_picture} />
                 <p className="ml-2 font-bold">{thread.userName}</p>
               </div>
-              <p className="mt-2" style={{ fontSize: "13px" }}>
+              <p className="mt-2 mb-2" style={{ fontSize: "13px" }}>
                 {thread.content}
               </p>
-
+              {thread.image && (
+                <img
+                  src={`http://localhost:5000/${thread.image}`}
+                  style={{ borderRadius: "10px", width: "30rem" }}
+                />
+              )}
               <div className="flex justify-between mt-2">
                 <div className="flex items-center  text-gray-400">
                   <button
@@ -165,7 +204,9 @@ const List = () => {
                     {likes}
                   </button>{" "}
                   <p className="gap-3">{thread.like_count}</p>{" "}
-                  <span style={{ fontSize: "13px", marginLeft:"4px" }}>Likes</span>
+                  <span style={{ fontSize: "13px", marginLeft: "4px" }}>
+                    Likes
+                  </span>
                   <FontAwesomeIcon
                     icon={faMessage}
                     className="ml-2 mr-1 text-gray-400"

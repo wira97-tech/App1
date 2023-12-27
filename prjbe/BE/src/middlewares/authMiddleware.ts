@@ -17,6 +17,7 @@ export default new (class AuthenticationMiddleware {
 
       next();
     } catch (error) {
+      console.error("Token verification error:", error);
       return res.status(401).json({ message: "token not valid" });
     }
   }

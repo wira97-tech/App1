@@ -77,6 +77,7 @@ const Login = () => {
             Forgot Password?
           </p>
           <button
+            type="button"
             onClick={handleLogin}
             className="mt-2 bg-green-700 hover:bg-green-900 rounded-full p-2 text-white w-full font-semibold items"
           >

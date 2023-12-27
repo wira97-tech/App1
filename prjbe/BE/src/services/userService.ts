@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { verify } from "jsonwebtoken";
-import { log } from "console";
+import { loginSchema, registerSchema } from "../utils/validator/authValidator";
 
 export default new (class UserService {
   private readonly userRepository: Repository<User> =
@@ -23,6 +23,10 @@ export default new (class UserService {
   async Register(req: Request, res: Response): Promise<Response> {
     try {
       const data = req.body;
+      const { error } = registerSchema.validate(req.body);
+      if (error) {
+        res.send(error);
+      }
       const responseData: number = await this.userRepository.count({
         where: { userName: data.userName },
       });
@@ -35,12 +39,10 @@ export default new (class UserService {
         fullName: data.fullName,
         email: data.email,
         password: bcryptPassword,
-        profil_picture: data.profil_picture,
-        profil_description: data.profil_description,
       });
       const insertData = await this.userRepository.save(User);
       return res.status(200).json({
-        message: "success insert data",
+        message: "success registering new user",
         insertData: insertData,
       });
     } catch (error) {
@@ -52,6 +54,12 @@ export default new (class UserService {
   async login(req: Request, res: Response): Promise<Response> {
     try {
       const data = req.body;
+      console.log("ini", data);
+      // const loginSession = res.locals.loginSession;
+      const { error } = loginSchema.validate(req.body);
+      if (error) {
+        res.send(error);
+      }
       const responseData = await this.userRepository.findOne({
         where: { email: data.email },
       });
@@ -69,10 +77,15 @@ export default new (class UserService {
         id: responseData.id,
         email: responseData.email,
         userName: responseData.userName,
+        fullName: responseData.fullName,
+        profil_picture: responseData.profil_picture,
+        profil_description: responseData.profil_description,
       };
       const token = jwt.sign({ user: userForToken }, "butuan1997", {
         expiresIn: "2h",
       });
+      res.locals.loginSession = userForToken;
+      console.log(res.locals.loginSession);
       return res.status(200).json({ message: "succesfully login", token });
     } catch (error) {
       console.log(error);
