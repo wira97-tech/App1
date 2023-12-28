@@ -146,8 +146,8 @@ const Replies = () => {
                 {thread.content}
               </p>
               <img
-                src={"http://localhost:5000/" + thread.image}
-                style={{ borderRadius: "10px", width: "30rem" }}
+                src={thread.image}
+                style={{ borderRadius: "10px", width: "20%", height: "40%" }}
               />
               <p
                 className=" text-gray-400"
@@ -250,7 +250,7 @@ const Replies = () => {
               {thread.content}
             </p>
             <img
-              src={"http://localhost:5000/" + thread.image}
+              src={thread.image}
               style={{ borderRadius: "10px", width: "30rem" }}
             />
             <div className="flex justify-between mt-2">

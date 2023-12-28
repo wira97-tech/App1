@@ -1,67 +1,75 @@
 import { Avatar, Button, Card, CardBody, Flex, Stack } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Api from "../lib/axios";
+import IProfilType from "../type/ProfilType";
 
 const Suggestion = () => {
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [followStates, setFollowStates] = useState<boolean[]>([]);
+  const [suggestedUsers, setSuggestedUsers] = useState<IProfilType[]>([]);
 
-  const handleButtonClick = () => {
-    setIsFollowing((prevIsFollowing) => !prevIsFollowing);
+  useEffect(() => {
+    const fetchSuggestedUsers = async () => {
+      try {
+        const response = await Api.get("/user");
+        if (response.status !== 200) {
+          throw new Error("Failed to fetch user data");
+        }
+        console.log("Actual response data:", response.data);
+        // Check if the response data is an array before setting state
+        if (Array.isArray(response.data.data)) {
+          setSuggestedUsers(response.data.data); // Assuming the response is an array of user objects
+        } else {
+          console.error("Invalid user data format:", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchSuggestedUsers();
+  }, []);
+
+  const handleButtonClick = (index: number) => {
+    const newFollowStates = [...followStates];
+    newFollowStates[index] = !newFollowStates[index];
+    setFollowStates(newFollowStates);
   };
   return (
     <Card marginTop="15px" maxW="sm">
       <CardBody>
         <h1>Suggested For You</h1>
-        <Flex marginTop="15px">
-          <Flex>
-            <Avatar
-              size="sm"
-              name="Kent Dodds"
-              src="https://bit.ly/kent-c-dodds"
-            />{" "}
-            <Stack fontSize="12px" marginLeft="5px">
-              <h5>Tajul Subqi</h5>
-              <p className="-mt-2">@tajul</p>
+        {suggestedUsers.map((user: IProfilType, index: number) => (
+          <Flex key={user.id} marginTop="15px">
+            <Flex>
+              <Avatar
+                size="sm"
+                name={user.fullName}
+                src={user.profil_picture}
+              />
+              <Stack fontSize="12px" marginLeft="5px">
+                <h5>{user.fullName}</h5>
+                <p className="-mt-2">@{user.userName}</p>
+              </Stack>
+            </Flex>
+            <Stack className="left-72 absolute">
+              <Button
+                borderRadius="5rem"
+                size="sm"
+                border="2px solid white"
+                fontSize="12px"
+                onClick={() => handleButtonClick(index)}
+                colorScheme={followStates[index] ? "gray" : "gray"}
+                _hover={{
+                  backgroundColor: followStates[index]
+                    ? "gray.500"
+                    : "gray.700",
+                }}
+              >
+                {followStates[index] ? "Following" : "Follow"}
+              </Button>
             </Stack>
           </Flex>
-          <Stack className="left-72 absolute">
-            <Button
-              borderRadius="5rem"
-              size="sm"
-              border="2px solid white"
-              fontSize="12px"
-              onClick={handleButtonClick}
-              colorScheme={isFollowing ? "gray" : "gray"}
-              _hover={{
-                backgroundColor: isFollowing ? "gray.500" : "gray.700",
-              }}
-            >
-              {isFollowing ? "Following" : "Follow"}
-            </Button>
-          </Stack>
-        </Flex>
-        <Flex marginTop="10px">
-          <Flex>
-            <Avatar
-              size="sm"
-              name="Kent Dodds"
-              src="https://bit.ly/kent-c-dodds"
-            />{" "}
-            <Stack fontSize="12px" marginLeft="5px">
-              <h5>Tajul Subqi</h5>
-              <p className="-mt-2">@tajul</p>
-            </Stack>
-          </Flex>
-          <Stack className="left-72 absolute">
-            <Button
-              borderRadius="5rem"
-              size="sm"
-              border="2px solid white"
-              fontSize="12px"
-            >
-              Follow
-            </Button>
-          </Stack>
-        </Flex>
+        ))}
       </CardBody>
     </Card>
   );

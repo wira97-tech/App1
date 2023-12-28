@@ -7,6 +7,7 @@ import Api from "../lib/axios";
 import IProfilType from "../type/ProfilType";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import IThreadType from "../type/ThreadType";
 
 const List = () => {
   const { colorMode } = useColorMode();
@@ -78,11 +79,12 @@ const List = () => {
     setInputValue("");
     setNewImage(undefined);
     clearImagePreview();
+    fetchDataFromApi();
   };
   console.log(Image);
   console.log(inputValue);
 
-  const [threads, setThreads] = useState<IProfilType[]>([]);
+  const [threads, setThreads] = useState<IThreadType[]>([]);
 
   // Mengambil data menggunakan instance Axios
   const fetchDataFromApi = async () => {
@@ -109,7 +111,19 @@ const List = () => {
       prevLikes !== undefined && prevLikes > 0 ? prevLikes - 1 : prevLikes + 1
     );
   };
+  const [userID, setUserID] = useState<IProfilType>();
+  useEffect(() => {
+    const fetchUserInformation = async () => {
+      try {
+        const response = await Api.get("/user"); // Adjust endpoint as needed
+        setUserID(response.data); // Assuming you have a state variable 'user'
+      } catch (error) {
+        console.error("Failed to fetch user information:", error);
+      }
+    };
 
+    fetchUserInformation();
+  }, []);
   return (
     <div className="container mx-auto border-l w-full ms-4 ">
       <div
@@ -120,7 +134,7 @@ const List = () => {
         <h1 className="font-bold mb-6 ml-2">Home</h1>
 
         <form className="flex ms-8" onSubmit={handleSubmit}>
-          <Avatar name="Dan Abrahmov" src={user.user.profil_picture} />
+          <Avatar name={user.user.userName} src={user.user.profil_picture} />
           <Input
             placeholder="What's Happening ?"
             value={inputValue}
@@ -172,7 +186,7 @@ const List = () => {
         )}
       </div>
       <div className="z-[2] ms-10 me-10">
-        {threads.map((thread: IProfilType) => (
+        {threads.map((thread) => (
           <div
             key={thread.id}
             className="p-3"
@@ -180,15 +194,21 @@ const List = () => {
           >
             <Link to={`/thread/${thread.id}`} className="">
               <div className="flex items-center">
-                <Avatar name={thread.fullName} src={thread.profil_picture} />
-                <p className="ml-2 font-bold">{thread.userName}</p>
+                <Avatar
+                  name={thread.user.fullName}
+                  src={thread.user.profil_picture}
+                />
+                <div className="flex flex-col" style={{ fontSize: "14px" }}>
+                  <p className="ml-2 font-semibold">{thread.user.fullName}</p>
+                  <p className="ml-2 font-light">@{thread.user.userName}</p>
+                </div>
               </div>
               <p className="mt-2 mb-2" style={{ fontSize: "13px" }}>
                 {thread.content}
               </p>
               {thread.image && (
                 <img
-                  src={`http://localhost:5000/${thread.image}`}
+                  src={thread.image}
                   style={{ borderRadius: "10px", width: "30rem" }}
                 />
               )}
