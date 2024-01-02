@@ -1,19 +1,25 @@
 // Replies.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { User } from './User';
-import { Thread } from './Thread';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm"
+import { User } from "./User"
+import { Thread } from "./Thread"
 
 @Entity()
 export class Replies {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column()
-  content: string;
+  content: string
 
-  @ManyToOne(() => User, user => user.replies)
-  user: User;
+  @ManyToOne(() => User, (user) => user.replies, {
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE",
+  })
+  user: User
 
-  @ManyToOne(() => Thread, thread => thread.replies)
-  thread: Thread;
+  @ManyToOne(() => Thread, (thread) => thread.replies, {
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE",
+  })
+  thread: Thread
 }

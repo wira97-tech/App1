@@ -1,42 +1,42 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faMessage } from "@fortawesome/free-solid-svg-icons";
-import { Avatar, Flex, Input, Textarea, useColorMode } from "@chakra-ui/react";
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { LuImagePlus } from "react-icons/lu";
-import Api from "../lib/axios";
-import IProfilType from "../type/ProfilType";
-import { Link } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import IThreadType from "../type/ThreadType";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faHeart, faMessage } from "@fortawesome/free-solid-svg-icons"
+import { Avatar, Flex, Input, Textarea, useColorMode } from "@chakra-ui/react"
+import { FormEvent, useEffect, useRef, useState } from "react"
+import { LuImagePlus } from "react-icons/lu"
+import Api from "../lib/axios"
+import IProfilType from "../type/ProfilType"
+import { Link } from "react-router-dom"
+import { jwtDecode } from "jwt-decode"
+import IThreadType from "../type/ThreadType"
 
 const List = () => {
-  const { colorMode } = useColorMode();
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const [inputValue, setInputValue] = useState("");
-  const [Image, setNewImage] = useState<File>();
-  const token = localStorage.getItem("token") + "";
-  const user = jwtDecode<{ user: any }>(token);
+  const { colorMode } = useColorMode()
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const [inputValue, setInputValue] = useState("")
+  const [Image, setNewImage] = useState<File>()
+  const token = localStorage.getItem("token") + ""
+  const user = jwtDecode<{ user: any }>(token)
 
   const handleImageClick = () => {
     // Membuka dialog pemilihan gambar saat ikon diklik
-    inputRef.current?.click();
-  };
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+    inputRef.current?.click()
+  }
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedImage = e.target.files?.[0];
+    const selectedImage = e.target.files?.[0]
     if (selectedImage) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(selectedImage);
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(selectedImage)
 
       if (e.target.files && e.target.files[0]) {
-        setNewImage(e.target.files[0]);
+        setNewImage(e.target.files[0])
       }
     }
-  };
+  }
 
   // const [liked, setLiked] = useState(false);
   // const [likes, setLikes] = useState(0);
@@ -52,78 +52,78 @@ const List = () => {
   // };
 
   const clearImagePreview = () => {
-    setImagePreview(null);
-  };
+    setImagePreview(null)
+  }
 
   const imagePreviewStyle: React.CSSProperties = {
     backgroundImage: `url(${imagePreview})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
-  };
+  }
 
-  useEffect(() => {});
+  useEffect(() => {})
 
   const handleInputChange = (event: any) => {
-    setInputValue(event.target.value);
-  };
-  console.log("input value:", inputValue);
+    setInputValue(event.target.value)
+  }
+  console.log("input value:", inputValue)
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("image", Image!);
-    formData.append("content", inputValue);
+    e.preventDefault()
+    const formData = new FormData()
+    formData.append("image", Image!)
+    formData.append("content", inputValue)
     const response = await Api.post("/thread", formData, {
       headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(response);
-    setInputValue("");
-    setNewImage(undefined);
-    clearImagePreview();
-    fetchDataFromApi();
-  };
-  console.log(Image);
-  console.log(inputValue);
+    })
+    console.log(response)
+    setInputValue("")
+    setNewImage(undefined)
+    clearImagePreview()
+    fetchDataFromApi()
+  }
+  console.log(Image)
+  console.log(inputValue)
 
-  const [threads, setThreads] = useState<IThreadType[]>([]);
+  const [threads, setThreads] = useState<IThreadType[]>([])
 
   // Mengambil data menggunakan instance Axios
   const fetchDataFromApi = async () => {
     try {
-      const response = await Api.get("/thread");
-      setThreads(response.data.data);
-      console.log("ini response", response);
+      const response = await Api.get("/thread")
+      setThreads(response.data.data)
+      console.log("ini response", response)
     } catch (error) {
-      console.error("Gagal mengambil data:", error);
+      console.error("Gagal mengambil data:", error)
     }
-  };
+  }
   useEffect(() => {
-    fetchDataFromApi();
-  }, []);
+    fetchDataFromApi()
+  }, [])
 
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(false)
   const [likes, setLikes] = useState(
     threads.length > 0 ? threads[0].like_count : 0
-  );
+  )
 
   const handleLikeClick = () => {
-    setLiked((prevLiked: boolean) => !prevLiked);
+    setLiked((prevLiked: boolean) => !prevLiked)
     setLikes((prevLikes) =>
       prevLikes !== undefined && prevLikes > 0 ? prevLikes - 1 : prevLikes + 1
-    );
-  };
-  const [userID, setUserID] = useState<IProfilType>();
+    )
+  }
+  const [userID, setUserID] = useState<IProfilType>()
   useEffect(() => {
     const fetchUserInformation = async () => {
       try {
-        const response = await Api.get("/user"); // Adjust endpoint as needed
-        setUserID(response.data); // Assuming you have a state variable 'user'
+        const response = await Api.get("/user")
+        setUserID(response.data)
       } catch (error) {
-        console.error("Failed to fetch user information:", error);
+        console.error("Failed to fetch user information:", error)
       }
-    };
+    }
 
-    fetchUserInformation();
-  }, []);
+    fetchUserInformation()
+  }, [])
   return (
     <div className="container mx-auto border-l w-full ms-4 ">
       <div
@@ -132,7 +132,6 @@ const List = () => {
         } p-5 z-[3]`}
       >
         <h1 className="font-bold mb-6 ml-2">Home</h1>
-
         <form className="flex ms-8" onSubmit={handleSubmit}>
           <Avatar name={user.user.userName} src={user.user.profil_picture} />
           <Input
@@ -142,7 +141,7 @@ const List = () => {
             className="mr-2 ml-2 p-1 bg-black"
             onChange={handleInputChange}
             resize="none"
-            border="none"
+            variant="flushed"
           />
           <label
             htmlFor="file"
@@ -170,7 +169,6 @@ const List = () => {
             Post
           </button>
         </form>
-
         {imagePreview && (
           <div
             className="w-20 h-20 overflow-hidden ml-24"
@@ -190,7 +188,7 @@ const List = () => {
           <div
             key={thread.id}
             className="p-3"
-            style={{ borderBottom: "1px solid" }}
+            style={{ borderBottom: "1px solid gray" }}
           >
             <Link to={`/thread/${thread.id}`} className="">
               <div className="flex items-center">
@@ -199,7 +197,7 @@ const List = () => {
                   src={thread.user.profil_picture}
                 />
                 <div className="flex flex-col" style={{ fontSize: "14px" }}>
-                  <p className="ml-2 font-semibold">{thread.user.fullName}</p>
+                  <p className="ml-2 font-medium">{thread.user.fullName}</p>
                   <p className="ml-2 font-light">@{thread.user.userName}</p>
                 </div>
               </div>
@@ -231,8 +229,10 @@ const List = () => {
                     icon={faMessage}
                     className="ml-2 mr-1 text-gray-400"
                   />
-                  <span>{thread.replies}</span>
-                  <span style={{ fontSize: "13px" }}>Replies</span>
+                  <span>{thread.replies.length}</span>
+                  <span style={{ fontSize: "13px", marginLeft: "4px" }}>
+                    Replies
+                  </span>
                 </div>
               </div>
             </Link>
@@ -240,6 +240,6 @@ const List = () => {
         ))}
       </div>
     </div>
-  );
-};
-export default List;
+  )
+}
+export default List

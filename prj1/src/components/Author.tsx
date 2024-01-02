@@ -1,18 +1,42 @@
-import { Card, CardBody, Flex } from "@chakra-ui/react";
-import { FaGithub, FaLinkedin, FaInstagram, FaFacebook } from "react-icons/fa";
+import { Card, CardBody, Flex, Link } from "@chakra-ui/react"
+import { FaGithub, FaLinkedin, FaInstagram, FaFacebook } from "react-icons/fa"
 
 const Author = () => {
   return (
-    <Card marginTop="15px" maxW="sm">
+    <Card marginTop="24px" maxW="sm">
       <CardBody>
         <Flex alignItems="center" className="gap-3">
           <p>
             Developed By <span className="font-extrabold">Putu Wiranto </span>
           </p>
-          <FaGithub />
-          <FaLinkedin />
-          <FaFacebook />
-          <FaInstagram />
+          <a
+            href="https://github.com/wira97-tech"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaGithub />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/putu-wiranto-p-9a2492131"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaLinkedin />
+          </a>
+          <a
+            href="https://shorturl.at/dhzOZ"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaFacebook />
+          </a>
+          <a
+            href="https://instagram.com/your-profile"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaInstagram />
+          </a>
         </Flex>
         <p className="flex items-center" style={{ fontSize: "10px" }}>
           Powered By{" "}
@@ -25,6 +49,6 @@ const Author = () => {
         </p>
       </CardBody>
     </Card>
-  );
-};
-export default Author;
+  )
+}
+export default Author

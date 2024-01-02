@@ -2,9 +2,11 @@ import * as express from "express";
 import * as cors from "cors";
 import { Request, Response } from "express";
 import { AppDataSource } from "./data-source";
+import path = require("path");
 import ThreadRouter from "./routes/threadRoute";
 import UserRouter from "./routes/userRoute";
-import path = require("path");
+import FollowRouter from "./routes/followRoute";
+import RepliesRouter from "./routes/repliesRoute";
 
 AppDataSource.initialize()
   .then(async () => {
@@ -22,6 +24,8 @@ AppDataSource.initialize()
     app.use(express.static(path.join(__dirname, "uploads")));
     app.use("/api/v1", ThreadRouter);
     app.use("/api/v1", UserRouter);
+    app.use("/api/v1", FollowRouter);
+    app.use("/api/v1", RepliesRouter);
 
     app.get("/", (req: Request, res: Response) => {
       res.status(200).json({ message: "Heeheheh" });
